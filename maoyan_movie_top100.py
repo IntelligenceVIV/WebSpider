@@ -16,7 +16,8 @@ from multiprocessing import Pool
 def get_one_page(url):
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit'
+                          '/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -56,7 +57,6 @@ def write_to_file(content):
 
 # insert into mysql database
 def insert_to_mysql_database(content):
-
     import pymysql.cursors
 
     # Connect to the database
@@ -77,11 +77,12 @@ def insert_to_mysql_database(content):
                                  content['index'],
                                  content['actor'],
                                  content['time'],
-                                 content['image'],))
+                                 content['image']))
 
         connection.commit()
     finally:
         connection.close()
+
 
 # insert into mongo database
 def insert_to_mongo_database(content):
@@ -90,22 +91,67 @@ def insert_to_mongo_database(content):
     client = pymongo.MongoClient("localhost", 27017)
     db = client.test
     collection = db['top100']
-    collection.insert_one(content)
+    try:
+        if collection.insert_one(content):
+            print("Saved to database successfully")
+    except Exception:
+        print("Failed to save to database")
+
+
+# insert into postgresql database
+def insert_to_postgres_database(content):
+    import psycopg2
+
+    # Connect to an existing database
+    conn = psycopg2.connect(database="top100",
+                            user="postgres",
+                            password="147258",
+                            host="127.0.0.1",
+                            port="5432")
+
+    # Open a cursor to perform database operations
+    cur = conn.cursor()
+
+    # Pass data to fill a query placeholders and let Psycopg perform
+    # the correct conversion (no more SQL injections!)
+    cur.execute("INSERT INTO movie (title, score, actor, index, time, image) VALUES "
+                "(%s, %s, %s, %s, %s, %s)", (
+                    content['title'],
+                    content['score'],
+                    content['index'],
+                    content['actor'],
+                    content['time'],
+                    content['image'])
+                )
+
+    # Make the changes to the database persistent
+    conn.commit()
+
+    cur.close()
+
+    conn.close()
 
 
 def main(offset):
     url = 'https://maoyan.com/board/4?offset=' + str(offset)
     html = get_one_page(url)
     for item in parse_one_page(html):
+
         pprint(item)
+
         # write_to_file(item)
+
         # insert_to_mysql_database(item)
-        insert_to_mongo_database(item)
+
+        # insert_to_mongo_database(item)
+
+        insert_to_postgres_database(item)
 
 
 if __name__ == "__main__":
     for i in range(10):
         main(offset=i * 10)
         time.sleep(1)
+
     # pool = Pool(processes=5)
     # pool.map(main, [i * 10 for i in range(10)])
