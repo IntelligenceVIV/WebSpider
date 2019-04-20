@@ -1,6 +1,6 @@
 # @Time    : 2019/4/18 18:03
 # @Author  : Noah
-# @File    : maoyan_movie_top100.py
+# @File    : mao yan_movie_top100.py
 # @Software: PyCharm
 # @description: top100 movie spider
 import time

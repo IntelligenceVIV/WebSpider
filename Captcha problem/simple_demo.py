@@ -2,7 +2,7 @@
 # @Author  : Noah
 # @File    : simple_demo.py
 # @Software: PyCharm
-# @description: test the tesserocr about recognition picture
+# @description: about recognition picture
 import tesserocr
 from PIL import Image
 

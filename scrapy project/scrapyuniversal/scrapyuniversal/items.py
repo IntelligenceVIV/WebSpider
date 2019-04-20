@@ -8,9 +8,11 @@
 import scrapy
 
 
-class Images360Item(scrapy.Item):
-    collection = table = 'images'
-    id = scrapy.Field()
-    url = scrapy.Field()
+class UniversalItem(scrapy.Item):
     title = scrapy.Field()
-    thumb = scrapy.Field()
+    url = scrapy.Field()
+    text = scrapy.Field()
+    datetime = scrapy.Field()
+    source = scrapy.Field()
+    website = scrapy.Field()
+
