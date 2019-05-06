@@ -18,6 +18,7 @@ class CrackGreet():
         self.email = EMAIL
         self.password = PASSWORD
 
+
 def main():
     pass
 

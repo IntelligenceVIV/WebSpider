@@ -2,7 +2,7 @@
 # @Author  : Noah
 # @File    : Ajax_toutiao_picture_spider.py
 # @Software: PyCharm
-# @description: toutiao picture spider
+# @description: picture spider
 import requests
 from urllib.parse import urlencode
 
